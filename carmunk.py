@@ -32,8 +32,14 @@ pygame.init()
 screen = pygame.display.set_mode((width, height))
 clock = pygame.time.Clock()
 
-car = pygame.image.load('car.png').convert_alpha()
-car=pygame.transform.scale(car, (100, 100))
+carr1 = pygame.image.load('carr1.png').convert_alpha()
+carr1=pygame.transform.scale(carr1, (100, 100))
+carr2 = pygame.image.load('carr2.png').convert_alpha()
+carr2=pygame.transform.scale(carr2, (100, 100))
+carb1 = pygame.image.load('carb1.png').convert_alpha()
+carb1=pygame.transform.scale(carb1, (100, 100))
+carb2 = pygame.image.load('carb2.png').convert_alpha()
+carb2=pygame.transform.scale(carb2, (100, 100))
 red = pygame.image.load('Red.png').convert_alpha()
 red=pygame.transform.rotate(red, 90)
 blue = pygame.image.load('Blue.png').convert_alpha()
@@ -50,8 +56,14 @@ draw_screen = False
 class GameState:
     def __init__(self):
         # Global-ish.
-        self.x1 = 50
-        self.y1 =  50
+        self.xr1 = 50
+        self.yr1 =  50
+        self.xr2 = 50
+        self.yr2 =  410
+        self.xb1 = 710
+        self.yb1 =  410
+        self.xb2 = 710
+        self.yb2 =  50
         self.crashed = False
         self.drawoptions = draw(screen)
         # Physics stuff.
@@ -308,10 +320,13 @@ class GameState:
         self.space.debug_draw(self.drawoptions)
         self.space.step(1./10)
         # x, y = self.car_body.position
-        self.x1 += inx
-        self.y1 += iny
-        print(self.x1,self.y1)
-        screen.blit(car, (self.x1-50, self.y1-50))
+        self.xr1 += inx
+        self.yr1 += iny
+        print(self.xr1,self.yr1)
+        screen.blit(carr1, (self.xr1-50, self.yr1-50))
+        screen.blit(carr2, (self.xr2-50, self.yr2))
+        screen.blit(carb1, (self.xb1-50, self.yb1-50))
+        screen.blit(carb2, (self.xb2-50, self.yb2-50))
         pygame.display.update()
         # # if draw_screen:
         # #     pygame.display.flip()

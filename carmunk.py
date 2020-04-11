@@ -59,8 +59,11 @@ class GameState:
         self.space.gravity = pymunk.Vec2d(0., 0.)
         #self.space.add_collision_handler(1, 1, post_solve=self.car_crashed)
         #pymunk.CollisionHandler(_handler=self.new_handle,post_solve=self.car_crashed,space = self.space)
-        # Create the car.
-        self.create_car(50, 50, 0)
+        # Create the robots.
+        self.create_car(50, 50, 0,1)
+        self.create_car(50, 410, 0,2)
+        self.create_car(710, 410, 0,3)
+        self.create_car(710, 50, 0,4)
         # Record steps.
         self.time = 0
         self.num_steps = 0
@@ -69,11 +72,11 @@ class GameState:
         # screen.blit(car, ())
         screen.blit(blue, (0, 0))
         screen.blit(blue, (0, 410))
-        x, y = self.car_body.position
+        x, y = self.robot1_body.position
         print(x, y)
         self.init_heuristic = Vec2d(self.goal[0]-x, self.goal[1]-y).get_length()
         self.prev_goal_distance = self.init_heuristic
-        self.car_body_prev_angle = 0
+        self.robot1_body_prev_angle = 0
         # Create walls.
         static = [
             pymunk.Segment(
@@ -180,8 +183,8 @@ class GameState:
         # brick_shape.position = x, 510-y
         return brick_shape
 
-    def create_car(self, x, y, r):
-        inertia = pymunk.moment_for_circle(1, 0, 14, (0, 0))
+    def create_car(self, x, y, r,nos):
+        '''inertia = pymunk.moment_for_circle(1, 0, 14, (0, 0))
         self.car_body = pymunk.Body(1, inertia)
         self.car_body.position = x, y
         self.car_shape = pymunk.Circle(self.car_body, 14)
@@ -192,7 +195,56 @@ class GameState:
         #self.car_body_prev_angle = self.car_body.angle
         driving_direction = Vec2d(1, 0).rotated(self.car_body.angle)
         self.car_body.apply_impulse_at_local_point(driving_direction)
-        self.space.add(self.car_body, self.car_shape)
+        self.space.add(self.car_body, self.car_shape)'''
+        inertia = pymunk.moment_for_circle(1, 0, 14, (0, 0))
+        if(nos==1):
+            self.robot1_body = pymunk.Body(1, inertia)
+            self.robot1_body.position = x, y
+            self.robot1_shape = pymunk.Circle(self.robot1_body, 14)
+            # self.car_shape.color = THECOLORS["gray"]
+            self.robot1_shape.elasticity = 1.0
+            self.robot1_body.angle = r
+            # screen.blit(car, (x, 510-y))
+            #self.car_body_prev_angle = self.car_body.angle
+            driving_direction = Vec2d(1, 0).rotated(self.robot1_body.angle)
+            self.robot1_body.apply_impulse_at_local_point(driving_direction)
+            self.space.add(self.robot1_body,self.robot1_shape)
+        elif(nos==2):
+            self.robot2_body = pymunk.Body(1, inertia)
+            self.robot2_body.position = x, y
+            self.robot2_shape = pymunk.Circle(self.robot2_body, 14)
+            # self.car_shape.color = THECOLORS["gray"]
+            self.robot2_shape.elasticity = 1.0
+            self.robot2_body.angle = r
+            # screen.blit(car, (x, 510-y))
+            #self.car_body_prev_angle = self.car_body.angle
+            driving_direction = Vec2d(1, 0).rotated(self.robot2_body.angle)
+            self.robot2_body.apply_impulse_at_local_point(driving_direction)
+            self.space.add(self.robot2_body,self.robot2_shape)
+        elif(nos==3):
+            self.robot3_body = pymunk.Body(1, inertia)
+            self.robot3_body.position = x, y
+            self.robot3_shape = pymunk.Circle(self.robot3_body, 14)
+            # self.car_shape.color = THECOLORS["gray"]
+            self.robot3_shape.elasticity = 1.0
+            self.robot3_body.angle = r
+            # screen.blit(car, (x, 510-y))
+            #self.car_body_prev_angle = self.car_body.angle
+            driving_direction = Vec2d(1, 0).rotated(self.robot3_body.angle)
+            self.robot3_body.apply_impulse_at_local_point(driving_direction)
+            self.space.add(self.robot3_body,self.robot3_shape)
+        else:
+            self.robot4_body = pymunk.Body(1, inertia)
+            self.robot4_body.position = x, y
+            self.robot4_shape = pymunk.Circle(self.robot4_body, 14)
+            # self.car_shape.color = THECOLORS["gray"]
+            self.robot4_shape.elasticity = 1.0
+            self.robot4_body.angle = r
+            # screen.blit(car, (x, 510-y))
+            #self.car_body_prev_angle = self.car_body.angle
+            driving_direction = Vec2d(1, 0).rotated(self.robot4_body.angle)
+            self.robot4_body.apply_impulse_at_local_point(driving_direction)
+            self.space.add(self.robot4_body,self.robot4_shape)
 
     
 
@@ -271,14 +323,14 @@ class GameState:
         for obstacle in self.obstacles:
             #print("hello")
             speed = random.randint(1, 2)
-            direction = Vec2d(1, 0).rotated(self.car_body.angle + random.randint(-2, 2))
+            direction = Vec2d(1, 0).rotated(self.robot1_body.angle + random.randint(-2, 2))
             obstacle.velocity = speed * direction
 
     def move_cat(self):
         speed = random.randint(20, 30)
-        self.cat_body.angle -= random.randint(-1, 1)
-        direction = Vec2d(1, 0).rotated(self.cat_body.angle)
-        self.cat_body.velocity = speed * direction
+        self.robot1_body.angle -= random.randint(-1, 1)
+        direction = Vec2d(1, 0).rotated(self.robot1_body.angle)
+        self.robot1_body.velocity = speed * direction
 
     def car_is_crashed(self, readings):
         if readings[0] == 1 or readings[1] == 1 or readings[2] == 1:
@@ -292,7 +344,7 @@ class GameState:
         """
         while self.crashed:
             # Go backwards.
-            self.car_body.velocity = -5 * driving_direction
+            self.robot1_body.velocity = -5 * driving_direction
             self.crashed = False
             for i in range(10):
                 #self.car_body.angle += .05  # Turn a little.

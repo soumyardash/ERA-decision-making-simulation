@@ -11,35 +11,35 @@ import keyboard
 
 LENGTH_COEFF = 6
 f=0.1
-y_outer=5100*f
-x_outer=8100*f
+y_outer=4480*f
+x_outer=8080*f
 f2 = 0.1 # factor to multiply by all dimensions given in rules manual
-x1 = (x_outer-8100*f2)/2# bottom left
-y1 = (y_outer-5100*f2)/2
-x2 = x1+8100*f2 #bottom right
+x1 = (x_outer-8080*f2)/2# bottom left
+y1 = (y_outer-4480*f2)/2
+x2 = x1+8080*f2 #bottom right
 y2 = y1
 x3 = x1 #top left
-y3 = y1+5100*f2
+y3 = y1+4480*f2
 x4 = x2 #top right
 y4 = y3
 
 goal=False
 prev_dist=0.0
 # PyGame init
-width = 810
-height = 510
+width = 808
+height = 448
 pygame.init()
 screen = pygame.display.set_mode((width, height))
 clock = pygame.time.Clock()
 
 carr1 = pygame.image.load('carr1.png').convert_alpha()
-carr1=pygame.transform.scale(carr1, (100, 100))
+carr1=pygame.transform.scale(carr1, (150, 150))
 carr2 = pygame.image.load('carr2.png').convert_alpha()
-carr2=pygame.transform.scale(carr2, (100, 100))
+carr2=pygame.transform.scale(carr2, (150, 150))
 carb1 = pygame.image.load('carb1.png').convert_alpha()
-carb1=pygame.transform.scale(carb1, (100, 100))
+carb1=pygame.transform.scale(carb1, (150, 150))
 carb2 = pygame.image.load('carb2.png').convert_alpha()
-carb2=pygame.transform.scale(carb2, (100, 100))
+carb2=pygame.transform.scale(carb2, (150, 150))
 red = pygame.image.load('Red.png').convert_alpha()
 red=pygame.transform.rotate(red, 90)
 blue = pygame.image.load('Blue.png').convert_alpha()
@@ -51,19 +51,43 @@ screen.set_alpha(None)
 show_sensors = True
 draw_screen = False
 
-
+def check(x0, y0):
+    if x0<=-50 or x0>=704 or y0<=-40 or y0>=334 :
+        return  0
+    if x0<=52 and y0<=82 and y0>=-13 : #top left
+        return 0
+    if x0>=607 and y0<=318 and y0>=222 : #bottom right
+        return 0
+    if x0>=530 and x0<=608 and y0<=62 : #top right
+        return 0
+    if x0>=48 and x0<=125 and y0>=234 : #bottom left
+        return 0
+    if x0>=251 and x0<=405 :
+        if y0>=222 and y0<=318 : 
+            return 0
+        if y0>=-20 and y0<=76 : 
+            return 0
+    if y0>=102 and y0<=196 :
+        if x0>=46 and x0<=183 :
+            return 0
+        if x0>=474 and x0<=610 :
+            return 0
+    if y0>=102 and y0<=191 and x0>=290 and x0<=366 :
+        return 0
+    else :
+        return 1
 
 class GameState:
     def __init__(self):
         # Global-ish.
-        self.xr1 = 50
-        self.yr1 =  50
-        self.xr2 = 50
-        self.yr2 =  410
-        self.xb1 = 710
-        self.yb1 =  410
-        self.xb2 = 710
-        self.yb2 =  50
+        self.xr1 = 682
+        self.yr1 =  323
+        self.xr2 = 682
+        self.yr2 =  -27
+        self.xb1 = -27
+        self.yb1 =  -27
+        self.xb2 = -27
+        self.yb2 =  323
         self.crashed = False
         self.drawoptions = draw(screen)
         # Physics stuff.
@@ -114,39 +138,37 @@ class GameState:
         # Create some obstacles, semi-randomly.
         # We'll create three and they'll move around to prevent over-fitting.
         self.obstacles = []
-        o1x =  50
-        o1y =  12.5+385
-        
+
         global prev_dist
         
         prev_dist = math.sqrt((self.goal[0]-100)*(self.goal[0]-100)+(510-self.goal[1]-100)*(510-self.goal[1]-100))
         
-        self.obstacles.append(self.create_rect_obstacle(o1x,o1y,100,25))
-        self.obstacles.append(self.create_rect_obstacle(400,112.5,100,25))
-        self.obstacles.append(self.create_rect_obstacle(400,o1y,100,25))
-        self.obstacles.append(self.create_rect_obstacle(760,112.5,100,25))
+        self.obstacles.append(self.create_rect_obstacle(50,338,100,20))
+        self.obstacles.append(self.create_rect_obstacle(404,103.5,100,20))
+        self.obstacles.append(self.create_rect_obstacle(404,344.5,100,20))
+        self.obstacles.append(self.create_rect_obstacle(758,103.5,100,20))
         
-        self.obstacles.append(self.create_rect_obstacle(610,255,80,25))
-        self.obstacles.append(self.create_rect_obstacle(200,255,80,25))
+        self.obstacles.append(self.create_rect_obstacle(618,224,80,20))
+        self.obstacles.append(self.create_rect_obstacle(190,224,80,20))
         
-        self.obstacles.append(self.create_rect_obstacle(150+12.5,50,25,100))
-        self.obstacles.append(self.create_rect_obstacle(810-(150+12.5),510-50,25,100))
+        self.obstacles.append(self.create_rect_obstacle(150+12.5,50,20,100))
+        self.obstacles.append(self.create_rect_obstacle(808-(150+12.5),448-50,20,100))
         
         self.obstacles.append(self.center_obstacle())
         
         self.create_buff_debuff((0, 255, 0), 400, 51, 54, 48)# buff zone
         # self.create_buff_debuff("green", 400, 51, 54, 48)# buff zone
-        self.obstacles.append(self.create_debuff( 190, 193.5, 54, 48))#debuff zone
+        self.obstacles.append(self.create_debuff( 190, 165, 54, 48))#debuff zone
         self.create_buff_debuff( (255, 255, 0), 50, 336, 54, 48)#supply zone
-        self.create_buff_debuff((255, 255, 0), 400, 510-51, 54, 48)#supply zone
-        self.obstacles.append(self.create_debuff( 810-190, 510-193.5, 54, 48))#debuff
-        self.create_buff_debuff((0, 0, 255), 810-50, 510-336, 54, 48)#enemy buff
+        self.create_buff_debuff((255, 255, 0), 400, 448-51, 54, 48)#supply zone
+        self.obstacles.append(self.create_debuff( 808-190, 448-165, 54, 48))#debuff
+        self.create_buff_debuff((0, 0, 255), 808-50, 448-336, 54, 48)#enemy buff
 
     def new_handle(self):
         pass
     
     def create_buff_debuff(self, color, x, y, w, h):
-        pygame.draw.rect(screen, color, (x-(w/2), 510-(y+h/2), w, h))
+        pygame.draw.rect(screen, color, (x-(w/2), 448-(y+h/2), w, h))
         
     def create_debuff(self, x, y, w, h):
         brick_body = pymunk.Body(body_type=pymunk.Body.STATIC)
@@ -212,7 +234,7 @@ class GameState:
         if(nos==1):
             self.robot1_body = pymunk.Body(1, inertia)
             self.robot1_body.position = x, y
-            self.robot1_shape = pymunk.Circle(self.robot1_body, 14)
+            self.robot1_shape = pymunk.Circle(self.robot1_body, 1)
             # self.car_shape.color = THECOLORS["gray"]
             self.robot1_shape.elasticity = 1.0
             self.robot1_body.angle = r
@@ -224,7 +246,7 @@ class GameState:
         elif(nos==2):
             self.robot2_body = pymunk.Body(1, inertia)
             self.robot2_body.position = x, y
-            self.robot2_shape = pymunk.Circle(self.robot2_body, 14)
+            self.robot2_shape = pymunk.Circle(self.robot2_body, 1)
             # self.car_shape.color = THECOLORS["gray"]
             self.robot2_shape.elasticity = 1.0
             self.robot2_body.angle = r
@@ -236,7 +258,7 @@ class GameState:
         elif(nos==3):
             self.robot3_body = pymunk.Body(1, inertia)
             self.robot3_body.position = x, y
-            self.robot3_shape = pymunk.Circle(self.robot3_body, 14)
+            self.robot3_shape = pymunk.Circle(self.robot3_body, 1)
             # self.car_shape.color = THECOLORS["gray"]
             self.robot3_shape.elasticity = 1.0
             self.robot3_body.angle = r
@@ -248,7 +270,7 @@ class GameState:
         else:
             self.robot4_body = pymunk.Body(1, inertia)
             self.robot4_body.position = x, y
-            self.robot4_shape = pymunk.Circle(self.robot4_body, 14)
+            self.robot4_shape = pymunk.Circle(self.robot4_body, 1)
             # self.car_shape.color = THECOLORS["gray"]
             self.robot4_shape.elasticity = 1.0
             self.robot4_body.angle = r
@@ -258,27 +280,18 @@ class GameState:
             self.robot4_body.apply_impulse_at_local_point(driving_direction)
             self.space.add(self.robot4_body,self.robot4_shape)
 
-    
-
     def frame_step(self):
         action = -1
         inx = 0
         iny = 0
         if keyboard.is_pressed('w'):
-            print("W")
-            action = 2
-            iny = 0.1
+            iny = -0.2
         if keyboard.is_pressed('a'):
-            print("A")
-            action = 0
-            inx = -0.1
+            inx = -0.2
         if keyboard.is_pressed('d'):
-            print("D")
-            action = 1
-            inx = 0.1
+            inx = 0.2
         if keyboard.is_pressed('s'):
-            print("D")
-            iny = -0.1
+            iny = 0.2
 
         global prev_dist, goal, car
         # print(action)
@@ -303,30 +316,31 @@ class GameState:
         #     self.car_body.velocity = 0*driving_direction
         # # Update the screen and stuff.	
         screen.fill(THECOLORS["gray"])
-        self.create_buff_debuff((0, 255, 0), 400, 51, 54, 48)# buff zone
+        self.create_buff_debuff((0, 255, 0), 404, 44.5, 54, 48)# buff zone
         # self.create_buff_debuff("green", 400, 51, 54, 48)# buff zone
         # self.create_debuff( 190, 193.5, 54, 48)#debuff zone
-        self.create_buff_debuff((255, 255, 0), 50, 336, 54, 48)#supply zone
-        self.create_buff_debuff((0, 0, 255), 400, 510-51, 54, 48)#supply zone
+        self.create_buff_debuff((255, 255, 0), 47, 279, 54, 48)#supply zone
+        self.create_buff_debuff((0, 0, 255), 404, 448-44.5, 54, 48)#supply zone
         # self.create_debuff( 810-190, 510-193.5, 54, 48)#debuff
-        self.create_buff_debuff((0, 0, 255), 810-50, 510-336, 54, 48)#enemy buff
+        self.create_buff_debuff((0, 0, 255), 808-47, 448-279, 54, 48)#enemy buff
         screen.blit(blue, (0, 0))
-        screen.blit(blue, (0, 410))
-        screen.blit(red, (710, 0))
-        screen.blit(red, (710, 410))
+        screen.blit(blue, (0, 348))
+        screen.blit(red, (708, 0))
+        screen.blit(red, (708, 348))
         
         #draw(screen, self.space)
         # pygame.display.update()
         self.space.debug_draw(self.drawoptions)
         self.space.step(1./10)
         # x, y = self.car_body.position
-        self.xr1 += inx
-        self.yr1 += iny
-        print(self.xr1,self.yr1)
-        screen.blit(carr1, (self.xr1-50, self.yr1-50))
-        screen.blit(carr2, (self.xr2-50, self.yr2))
-        screen.blit(carb1, (self.xb1-50, self.yb1-50))
-        screen.blit(carb2, (self.xb2-50, self.yb2-50))
+        if check(self.xb1+inx, self.yb1+iny):
+            self.xb1 += inx
+            self.yb1 += iny
+        print(self.xb1,self.yb1)
+        screen.blit(carr1, (self.xr1, self.yr1))
+        screen.blit(carr2, (self.xr2, self.yr2))
+        screen.blit(carb1, (self.xb1, self.yb1))
+        screen.blit(carb2, (self.xb2, self.yb2))
         pygame.display.update()
         # # if draw_screen:
         # #     pygame.display.flip()

@@ -29,7 +29,7 @@ prev_dist=0.0
 width = 808
 height = 448
 pygame.init()
-screen = pygame.display.set_mode((width, height))
+screen = pygame.display.set_mode((width+200, height))
 clock = pygame.time.Clock()
 
 font = pygame.font.Font('freesansbold.ttf', 15)
@@ -49,6 +49,7 @@ blue=pygame.transform.rotate(blue, -90)
 buff = pygame.image.load('buff.png').convert_alpha()
 # Turn off alpha since we don't use it.
 screen.set_alpha(None)
+
 
 # Showing sensors and redrawing slows things down.
 show_sensors = True
@@ -113,13 +114,46 @@ def ifshoot(xr, yr, xb, yb):
     for xi in arr:
         x = 2*xi + xb
         y = yb + m*(x-xb)
-        print("hello", x, y, yr)
+        # print("hello", x, y, yr)
         if check_shoot(x,y)==0 :
-            print("not good")
+            # print("not good")
             return 0
         if y>=yr :
-            print("halloween")
+            # print("halloween")
             return 1
+
+class Point:
+    # constructed using a normal tupple
+    def __init__(self, point_t = (0,0)):
+        self.x = float(point_t[0])
+        self.y = float(point_t[1])
+    # define all useful operators
+    def __add__(self, other):
+        return Point((self.x + other.x, self.y + other.y))
+    def __sub__(self, other):
+        return Point((self.x - other.x, self.y - other.y))
+    def __mul__(self, scalar):
+        return Point((self.x*scalar, self.y*scalar))
+    def __div__(self, scalar):
+        return Point((self.x/scalar, self.y/scalar))
+    def __len__(self):
+        return int(math.sqrt(self.x**2 + self.y**2))
+    # get back values in original tuple format
+    def get(self):
+        return (self.x, self.y)
+
+def draw_dashed_line(surf, color, start_pos, end_pos, width=1, dash_length=10):
+    origin = Point(start_pos)
+    target = Point(end_pos)
+    displacement = target - origin
+    length = len(displacement)
+    slope = displacement.__div__(length)
+
+    for index in range(0, int(length/dash_length), 3):
+        start = origin + (slope *    index    * dash_length)
+        end   = origin + (slope * (index + 1) * dash_length)
+        pygame.draw.line(surf, color, start.get(), end.get(), width)
+
 
 class GameState:
     def __init__(self):
@@ -436,7 +470,14 @@ class GameState:
         screen.blit(blue, (0, 348))
         screen.blit(red, (708, 0))
         screen.blit(red, (708, 348))
+        screen.blit(buff, (50-27,148))
+        screen.blit(buff, (400-24,510-130))
+        screen.blit(buff, (190-27,193.5+65))
+        screen.blit(buff,(810-219, 510-370))
+        screen.blit(buff,(400-25, 27-7))
+        screen.blit(buff,(733,312-57))
         
+        pygame.draw.line(screen, (0,0,0), (808,0), (808,448), 3)
         #draw(screen, self.space)
         # pygame.display.update()
         self.space.debug_draw(self.drawoptions)
@@ -451,7 +492,8 @@ class GameState:
 
         if d_b1_r1 <= 200 and d_b1_r1<=d_b1_r2:
             if ifshoot(self.xr1+75, self.yr1+75, self.xb1+75, self.yb1+75):
-                pygame.draw.line(screen, (255,0,255), (self.xb1+75,self.yb1+75), (self.xr1+75,self.yr1+75), 5)
+                # pygame.draw.line(screen, (255,0,255), (self.xb1+75,self.yb1+75), (self.xr1+75,self.yr1+75), 5)
+                draw_dashed_line(screen, (255,0,255), (self.xb1+75,self.yb1+75), (self.xr1+75,self.yr1+75), width=5, dash_length=5)
                 x = random.randrange(1,5,1)#projectiles shot by blue1
                 y = random.randrange(1,5,1)#projectiles shot by red1
                 self.pr1-=y
@@ -461,7 +503,8 @@ class GameState:
 
         elif d_b1_r2 <=200 and d_b1_r2<d_b1_r1:
             if ifshoot(self.xr2+75, self.yr2+75, self.xb1+75, self.yb1+75):
-                pygame.draw.line(screen, (255,255,0), (self.xb1+75,self.yb1+75), (self.xr2+75,self.yr2+75), 5)
+                # pygame.draw.line(screen, (255,255,0), (self.xb1+75,self.yb1+75), (self.xr2+75,self.yr2+75), 5)
+                draw_dashed_line(screen, (255,255,0), (self.xb1+75,self.yb1+75), (self.xr2+75,self.yr2+75), width=5, dash_length=5)
                 x = random.randrange(1,5,1)#projectiles shot by blue1
                 y = random.randrange(1,5,1)#projectiles shot by red2
                 self.pr2-=y
@@ -471,7 +514,8 @@ class GameState:
 
         if d_b2_r1 <= 200 and d_b2_r1<=d_b2_r2:
             if ifshoot(self.xr1+75, self.yr1+75, self.xb2+75, self.yb2+75):
-                pygame.draw.line(screen, (0,255,255), (self.xb2+75,self.yb2+75), (self.xr1+75,self.yr1+75), 5)
+                # pygame.draw.line(screen, (0,255,255), (self.xb2+75,self.yb2+75), (self.xr1+75,self.yr1+75), 5)
+                draw_dashed_line(screen, (0,255,255), (self.xb2+75,self.yb2+75), (self.xr1+75,self.yr1+75), width=5, dash_length=5)
                 x = random.randrange(1,5,1)#projectiles shot by blue2
                 y = random.randrange(1,5,1)#projectiles shot by red1
                 self.pr1-=y
@@ -481,7 +525,8 @@ class GameState:
 
         elif d_b2_r2 <=200 and d_b2_r2<d_b2_r1:
             if ifshoot(self.xr2+75, self.yr2+75, self.xb2+75, self.yb2+75):
-                pygame.draw.line(screen, (255,0,0), (self.xb2+75,self.yb2+75), (self.xr2+75,self.yr2+75), 5)
+                # pygame.draw.line(screen, (255,0,0), (self.xb2+75,self.yb2+75), (self.xr2+75,self.yr2+75), 5)
+                draw_dashed_line(screen, (255,0,0), (self.xb2+75,self.yb2+75), (self.xr2+75,self.yr2+75), width=5, dash_length=5)
                 x = random.randrange(1,5,1)#projectiles shot by blue2
                 y = random.randrange(1,5,1)#projectiles shot by red2
                 self.pr2-=y
@@ -490,18 +535,18 @@ class GameState:
                 self.healr2-=x
         
         #DISPLAY HEALTH AND PROJECTILE INFO ON SCREEN
-        text1 = font.render('red1 health='+str(self.healr1), True, (255,0,255))  
+        text1 = font.render('red1 health='+str(self.healr1), True, (255,0,0))  
         healthr1 = text1.get_rect()  
-        text2 = font.render('red2 health='+str(self.healr2), True, (255,0,255))  
+        text2 = font.render('red2 health='+str(self.healr2), True, (255,0,0))  
         healthr2 = text2.get_rect()
-        text3 = font.render('blue1 health='+str(self.healb1), True, (255,0,255))  
+        text3 = font.render('blue1 health='+str(self.healb1), True, (255,0,0))  
         healthb1 = text3.get_rect()
-        text4 = font.render('blue2 health='+str(self.healb2), True, (255,0,255))  
+        text4 = font.render('blue2 health='+str(self.healb2), True, (255,0,0))  
         healthb2 = text4.get_rect()
-        healthr1.center = (160,20)
-        healthr2.center = (320,20)
-        healthb1.center = (480,20)
-        healthb2.center = (640,20)
+        healthr1.center = (908,20)
+        healthr2.center = (908,40)
+        healthb1.center = (908,60)
+        healthb2.center = (908,80)
         screen.blit(text1,healthr1)
         screen.blit(text2,healthr2)
         screen.blit(text3,healthb1)
@@ -511,18 +556,18 @@ class GameState:
         screen.blit(carb1, (self.xb1, self.yb1))
         screen.blit(carb2, (self.xb2, self.yb2))
 
-        text1 = font.render('red1 bullets='+str(self.pr1), True, (255,0,255))  
+        text1 = font.render('red1 bullets='+str(self.pr1), True, (255,0,0))  
         projr1 = text1.get_rect()  
-        text2 = font.render('red2 bullets='+str(self.pr2), True, (255,0,255))  
+        text2 = font.render('red2 bullets='+str(self.pr2), True, (255,0,0))  
         projr2 = text2.get_rect()
-        text3 = font.render('blue1 bullets='+str(self.pb1), True, (255,0,255))  
+        text3 = font.render('blue1 bullets='+str(self.pb1), True, (255,0,0))  
         projb1 = text3.get_rect()
-        text4 = font.render('blue2 bullets='+str(self.pb2), True, (255,0,255))  
+        text4 = font.render('blue2 bullets='+str(self.pb2), True, (255,0,0))  
         projb2 = text4.get_rect()
-        projr1.center = (160,400)
-        projr2.center = (320,400)
-        projb1.center = (480,400)
-        projb2.center = (640,400)
+        projr1.center = (908,120)
+        projr2.center = (908,140)
+        projb1.center = (908,160)
+        projb2.center = (908,180)
         screen.blit(text1,projr1)
         screen.blit(text2,projr2)
         screen.blit(text3,projb1)
@@ -533,12 +578,12 @@ class GameState:
         screen.blit(carb1, (self.xb1, self.yb1))
         screen.blit(carb2, (self.xb2, self.yb2))
 
-        screen.blit(buff, (50-27,148))
-        screen.blit(buff, (400-24,510-130))
-        screen.blit(buff, (190-27,193.5+65))
-        screen.blit(buff,(810-219, 510-370))
-        screen.blit(buff,(400-25, 27-7))
-        screen.blit(buff,(733,312-57))
+        # screen.blit(buff, (50-27,148))
+        # screen.blit(buff, (400-24,510-130))
+        # screen.blit(buff, (190-27,193.5+65))
+        # screen.blit(buff,(810-219, 510-370))
+        # screen.blit(buff,(400-25, 27-7))
+        # screen.blit(buff,(733,312-57))
         pygame.display.update()
         # # if draw_screen:
         # #     pygame.display.flip()

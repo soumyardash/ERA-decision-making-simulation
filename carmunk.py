@@ -77,6 +77,47 @@ def check(x0, y0):
         return 0
     else :
         return 1
+    
+def check_shoot(x0, y0):
+    # if x0<=-50 or x0>=704 or y0<=-40 or y0>=334 :
+    #     return  0
+    if x0<=100 and y0<=121 and y0>=96 : #top left
+        return 0
+    if x0>=707 and y0<=354 and y0>=336 : #bottom right
+        return 0
+    if x0>=634 and x0<=657 and y0<=100 : #top right
+        return 0
+    if x0>=153 and x0<=172 and y0>=350 : #bottom left
+        return 0
+    if x0>=352 and x0<=454 :
+        if y0>=334 and y0<=357 : 
+            return 0
+        if y0>=92 and y0<=115 : 
+            return 0
+    if y0>=215 and y0<=235 :
+        if x0>=149 and x0<=233 :
+            return 0
+        if x0>=577 and x0<=659 :
+            return 0
+    if y0>=213 and y0<=240 and x0>=390 and x0<=417 :
+        return 0
+    else :
+        return 1
+
+def ifshoot(xr, yr, xb, yb):
+    arr = range(101)
+    y = 0
+    m = (yr-yb)/(xr-xb+0.0001)
+    for xi in arr:
+        x = 2*xi + xb
+        y = yb + m*(x-xb)
+        print("hello", x, y, yr)
+        if check_shoot(x,y)==0 :
+            print("not good")
+            return 0
+        if y>=yr :
+            print("halloween")
+            return 1
 
 class GameState:
     def __init__(self):
@@ -337,6 +378,18 @@ class GameState:
         if check(self.xb1+inx, self.yb1+iny):
             self.xb1 += inx
             self.yb1 += iny
+        d_b1_r1 = np.sqrt(np.square(self.xr1-self.xb1)+np.square(self.yr1-self.yb1))
+        d_b1_r2 = np.sqrt(np.square(self.xr2-self.xb1)+np.square(self.yr2-self.yb1))
+        d_b2_r1 = np.sqrt(np.square(self.xr1-self.xb2)+np.square(self.yr1-self.yb2))
+        d_b2_r2 = np.sqrt(np.square(self.xr2-self.xb2)+np.square(self.yr2-self.yb2))
+
+        # pygame.draw.line(screen, (255,100,0), (self.xb1,self.yb1), (0,0), 5)
+
+        if d_b1_r1 <= 200 :
+            if ifshoot(self.xr1+75, self.yr1+75, self.xb1+75, self.yb1+75):
+                # print("shit")
+                pygame.draw.line(screen, (255,0,255), (self.xb1+75,self.yb1+75), (self.xr1+75,self.yr1+75), 5)
+
         print(self.xb1,self.yb1)
         screen.blit(carr1, (self.xr1, self.yr1))
         screen.blit(carr2, (self.xr2, self.yr2))

@@ -644,3 +644,5 @@ if __name__ == "__main__":
     
     robo1.close()
     robo2.close()
+    robo3.close()
+    robo4.close()

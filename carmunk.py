@@ -322,7 +322,7 @@ class GameState:
             self.robot4_body.apply_impulse_at_local_point(driving_direction)
             self.space.add(self.robot4_body,self.robot4_shape)
 
-    def frame_step(self,Debug,robo1,robo2,word1=None,word2=None):
+    def frame_step(self,Debug,robo1,robo2,robo3,robo4,word1=None,word2=None,word3=None,word4=None):
         action = -1
         flag=1
         if keyboard.is_pressed('q'):
@@ -331,7 +331,27 @@ class GameState:
         iny1 = 0
         inx2 = 0
         iny2 = 0
+        inx3 = 0
+        iny3 = 0
+        inx4 = 0
+        iny4 = 0
         if Debug:
+            if keyboard.is_pressed('i'):
+                iny4 = -0.2
+            if keyboard.is_pressed('j'):
+                inx4 = -0.2
+            if keyboard.is_pressed('l'):
+                inx4 = 0.2
+            if keyboard.is_pressed('k'):
+                iny4 = 0.2
+            if keyboard.is_pressed('8'):
+                iny3 = -0.2
+            if keyboard.is_pressed('4'):
+                inx3 = -0.2
+            if keyboard.is_pressed('6'):
+                inx3 = 0.2
+            if keyboard.is_pressed('5'):
+                iny3 = 0.2
             if keyboard.is_pressed('up'):
                 iny2 = -0.2
             if keyboard.is_pressed('left'):
@@ -354,12 +374,22 @@ class GameState:
             if check(self.xb2+inx2,self.yb2+iny2):
                 self.xb2 += inx2
                 self.yb2 += iny2
+            if check(self.xr1+inx3, self.yr1+iny3):
+                self.xr1 += inx3
+                self.yr1 += iny3
+            if check(self.xr2+inx4,self.yr2+iny4):
+                self.xr2 += inx4
+                self.yr2 += iny4
             robo1.write(str(self.xb1)+" "+str(self.yb1)+"\n")
             robo2.write(str(self.xb2)+" "+str(self.yb2)+"\n")
+            robo3.write(str(self.xr1)+" "+str(self.yr1)+"\n")
+            robo4.write(str(self.xr2)+" "+str(self.yr2)+"\n")
             
         else :
             self.xb1,self.yb1 = float(word1[0]),float(word1[1])
             self.xb2,self.yb2 = float(word2[0]),float(word2[1])
+            self.xr1,self.yr1 = float(word3[0]),float(word3[1])
+            self.xr2,self.yr2 = float(word4[0]),float(word4[1])
 
         global prev_dist, goal, car
         # print(action)
@@ -598,16 +628,19 @@ if __name__ == "__main__":
     if Debug:
         robo1 = open("robo1.txt","w+")
         robo2 = open("robo2.txt","w+")
+        robo3 = open("robo3.txt","w+")
+        robo4 = open("robo4.txt","w+")
         while flag:
-            flag = game_state.frame_step(Debug,robo1,robo2)
+            flag = game_state.frame_step(Debug,robo1,robo2,robo3,robo4)
     else:
         robo1 = open("robo1.txt","r")
         robo2 = open("robo2.txt","r")
-        for line1,line2 in zip(robo1,robo2):
+        for line1,line2,line3,line4 in zip(robo1,robo2,robo3,robo4):
             word1 = line1.split(' ')
             word2 = line2.split(' ')
-            print(word1[0],word1[1])
-            flag = game_state.frame_step(Debug,robo1,robo2,word1,word2)
+            word3 = line3.split(' ')
+            word4 = line4.split(' ')
+            flag = game_state.frame_step(Debug,robo1,robo2,robo3,robo4,word1,word2,word3,word4)
     
     robo1.close()
     robo2.close()

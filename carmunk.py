@@ -32,6 +32,8 @@ pygame.init()
 screen = pygame.display.set_mode((width, height))
 clock = pygame.time.Clock()
 
+font = pygame.font.Font('freesansbold.ttf', 15)
+
 carr1 = pygame.image.load('carr1.png').convert_alpha()
 carr1=pygame.transform.scale(carr1, (150, 150))
 carr2 = pygame.image.load('carr2.png').convert_alpha()
@@ -130,6 +132,14 @@ class GameState:
         self.yb1 =  -27
         self.xb2 = -27
         self.yb2 =  323
+        self.healr1 = 2000
+        self.healr2 = 2000
+        self.healb1 = 2000
+        self.healb2 = 2000
+        self.pr1 = 100
+        self.pr2 = 100
+        self.pb1 = 100
+        self.pb2 = 100
         self.crashed = False
         self.drawoptions = draw(screen)
         # Physics stuff.
@@ -322,7 +332,7 @@ class GameState:
             self.robot4_body.apply_impulse_at_local_point(driving_direction)
             self.space.add(self.robot4_body,self.robot4_shape)
 
-    def frame_step(self,Debug,robo1,robo2,robo3,robo4,word1=None,word2=None,word3=None,word4=None):
+    def frame_step(self,Debug,robo1=None,robo2=None,robo3=None,robo4=None,word1=None,word2=None,word3=None,word4=None):
         action = -1
         flag=1
         if keyboard.is_pressed('q'):
@@ -335,6 +345,7 @@ class GameState:
         iny3 = 0
         inx4 = 0
         iny4 = 0
+
         if Debug:
             if keyboard.is_pressed('i'):
                 iny4 = -0.2
@@ -431,26 +442,97 @@ class GameState:
         self.space.debug_draw(self.drawoptions)
         self.space.step(1./10)
         # x, y = self.car_body.position
-        if check(self.xb1+inx1, self.yb1+iny1):
-            self.xb1 += inx1
-            self.yb1 += iny1
         d_b1_r1 = np.sqrt(np.square(self.xr1-self.xb1)+np.square(self.yr1-self.yb1))
         d_b1_r2 = np.sqrt(np.square(self.xr2-self.xb1)+np.square(self.yr2-self.yb1))
         d_b2_r1 = np.sqrt(np.square(self.xr1-self.xb2)+np.square(self.yr1-self.yb2))
         d_b2_r2 = np.sqrt(np.square(self.xr2-self.xb2)+np.square(self.yr2-self.yb2))
-
+        
         # pygame.draw.line(screen, (255,100,0), (self.xb1,self.yb1), (0,0), 5)
 
-        if d_b1_r1 <= 200 :
+        if d_b1_r1 <= 200 and d_b1_r1<=d_b1_r2:
             if ifshoot(self.xr1+75, self.yr1+75, self.xb1+75, self.yb1+75):
-                # print("shit")
                 pygame.draw.line(screen, (255,0,255), (self.xb1+75,self.yb1+75), (self.xr1+75,self.yr1+75), 5)
+                x = random.randrange(1,5,1)#projectiles shot by blue1
+                y = random.randrange(1,5,1)#projectiles shot by red1
+                self.pr1-=y
+                self.pb1-=x
+                self.healb1-=y
+                self.healr1-=x
 
-        print(self.xb1,self.yb1)
+        elif d_b1_r2 <=200 and d_b1_r2<d_b1_r1:
+            if ifshoot(self.xr2+75, self.yr2+75, self.xb1+75, self.yb1+75):
+                pygame.draw.line(screen, (255,255,0), (self.xb1+75,self.yb1+75), (self.xr2+75,self.yr2+75), 5)
+                x = random.randrange(1,5,1)#projectiles shot by blue1
+                y = random.randrange(1,5,1)#projectiles shot by red2
+                self.pr2-=y
+                self.pb1-=x
+                self.healb1-=y
+                self.healr2-=x
+
+        if d_b2_r1 <= 200 and d_b2_r1<=d_b2_r2:
+            if ifshoot(self.xr1+75, self.yr1+75, self.xb2+75, self.yb2+75):
+                pygame.draw.line(screen, (0,255,255), (self.xb2+75,self.yb2+75), (self.xr1+75,self.yr1+75), 5)
+                x = random.randrange(1,5,1)#projectiles shot by blue2
+                y = random.randrange(1,5,1)#projectiles shot by red1
+                self.pr1-=y
+                self.pb2-=x
+                self.healb2-=y
+                self.healr1-=x
+
+        elif d_b2_r2 <=200 and d_b2_r2<d_b2_r1:
+            if ifshoot(self.xr2+75, self.yr2+75, self.xb2+75, self.yb2+75):
+                pygame.draw.line(screen, (255,0,0), (self.xb2+75,self.yb2+75), (self.xr2+75,self.yr2+75), 5)
+                x = random.randrange(1,5,1)#projectiles shot by blue2
+                y = random.randrange(1,5,1)#projectiles shot by red2
+                self.pr2-=y
+                self.pb2-=x
+                self.healb2-=y
+                self.healr2-=x
+        
+        #DISPLAY HEALTH AND PROJECTILE INFO ON SCREEN
+        text1 = font.render('red1 health='+str(self.healr1), True, (255,0,255))  
+        healthr1 = text1.get_rect()  
+        text2 = font.render('red2 health='+str(self.healr2), True, (255,0,255))  
+        healthr2 = text2.get_rect()
+        text3 = font.render('blue1 health='+str(self.healb1), True, (255,0,255))  
+        healthb1 = text3.get_rect()
+        text4 = font.render('blue2 health='+str(self.healb2), True, (255,0,255))  
+        healthb2 = text4.get_rect()
+        healthr1.center = (160,20)
+        healthr2.center = (320,20)
+        healthb1.center = (480,20)
+        healthb2.center = (640,20)
+        screen.blit(text1,healthr1)
+        screen.blit(text2,healthr2)
+        screen.blit(text3,healthb1)
+        screen.blit(text4,healthb2) 
         screen.blit(carr1, (self.xr1, self.yr1))
         screen.blit(carr2, (self.xr2, self.yr2))
         screen.blit(carb1, (self.xb1, self.yb1))
         screen.blit(carb2, (self.xb2, self.yb2))
+
+        text1 = font.render('red1 bullets='+str(self.pr1), True, (255,0,255))  
+        projr1 = text1.get_rect()  
+        text2 = font.render('red2 bullets='+str(self.pr2), True, (255,0,255))  
+        projr2 = text2.get_rect()
+        text3 = font.render('blue1 bullets='+str(self.pb1), True, (255,0,255))  
+        projb1 = text3.get_rect()
+        text4 = font.render('blue2 bullets='+str(self.pb2), True, (255,0,255))  
+        projb2 = text4.get_rect()
+        projr1.center = (160,400)
+        projr2.center = (320,400)
+        projb1.center = (480,400)
+        projb2.center = (640,400)
+        screen.blit(text1,projr1)
+        screen.blit(text2,projr2)
+        screen.blit(text3,projb1)
+        screen.blit(text4,projb2)
+
+        screen.blit(carr1, (self.xr1, self.yr1))
+        screen.blit(carr2, (self.xr2, self.yr2))
+        screen.blit(carb1, (self.xb1, self.yb1))
+        screen.blit(carb2, (self.xb2, self.yb2))
+
         screen.blit(buff, (50-27,148))
         screen.blit(buff, (400-24,510-130))
         screen.blit(buff, (190-27,193.5+65))
@@ -624,7 +706,7 @@ if __name__ == "__main__":
     game_state = GameState()
     flag = 1
     # game_state.frame_step(2)
-    Debug = False
+    Debug = True
     if Debug:
         robo1 = open("robo1.txt","w+")
         robo2 = open("robo2.txt","w+")

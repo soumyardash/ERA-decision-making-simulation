@@ -44,6 +44,7 @@ red = pygame.image.load('Red.png').convert_alpha()
 red=pygame.transform.rotate(red, 90)
 blue = pygame.image.load('Blue.png').convert_alpha()
 blue=pygame.transform.rotate(blue, -90)
+buff = pygame.image.load('buff.png').convert_alpha()
 # Turn off alpha since we don't use it.
 screen.set_alpha(None)
 
@@ -156,13 +157,13 @@ class GameState:
         
         self.obstacles.append(self.center_obstacle())
         
-        self.create_buff_debuff((0, 255, 0), 400, 51, 54, 48)# buff zone
+        #self.create_buff_debuff((0, 255, 0), 400, 51, 54, 48)# buff zone
         # self.create_buff_debuff("green", 400, 51, 54, 48)# buff zone
-        self.obstacles.append(self.create_debuff( 190, 165, 54, 48))#debuff zone
-        self.create_buff_debuff( (255, 255, 0), 50, 336, 54, 48)#supply zone
-        self.create_buff_debuff((255, 255, 0), 400, 448-51, 54, 48)#supply zone
-        self.obstacles.append(self.create_debuff( 808-190, 448-165, 54, 48))#debuff
-        self.create_buff_debuff((0, 0, 255), 808-50, 448-336, 54, 48)#enemy buff
+        #self.obstacles.append(self.create_debuff( 190, 165, 54, 48))#debuff zone
+        #self.create_buff_debuff( (255, 255, 0), 50, 336, 54, 48)#supply zone
+        #self.create_buff_debuff((255, 255, 0), 400, 448-51, 54, 48)#supply zone
+        #self.obstacles.append(self.create_debuff( 808-190, 448-165, 54, 48))#debuff
+        #self.create_buff_debuff((0, 0, 255), 808-50, 448-336, 54, 48)#enemy buff
 
     def new_handle(self):
         pass
@@ -316,13 +317,13 @@ class GameState:
         #     self.car_body.velocity = 0*driving_direction
         # # Update the screen and stuff.	
         screen.fill(THECOLORS["gray"])
-        self.create_buff_debuff((0, 255, 0), 404, 44.5, 54, 48)# buff zone
+        #self.create_buff_debuff((0, 255, 0), 404, 44.5, 54, 48)# buff zone
         # self.create_buff_debuff("green", 400, 51, 54, 48)# buff zone
         # self.create_debuff( 190, 193.5, 54, 48)#debuff zone
-        self.create_buff_debuff((255, 255, 0), 47, 279, 54, 48)#supply zone
-        self.create_buff_debuff((0, 0, 255), 404, 448-44.5, 54, 48)#supply zone
+        #self.create_buff_debuff((255, 255, 0), 47, 279, 54, 48)#supply zone
+        #self.create_buff_debuff((0, 0, 255), 404, 448-44.5, 54, 48)#supply zone
         # self.create_debuff( 810-190, 510-193.5, 54, 48)#debuff
-        self.create_buff_debuff((0, 0, 255), 808-47, 448-279, 54, 48)#enemy buff
+        #self.create_buff_debuff((0, 0, 255), 808-47, 448-279, 54, 48)#enemy buff
         screen.blit(blue, (0, 0))
         screen.blit(blue, (0, 348))
         screen.blit(red, (708, 0))
@@ -341,6 +342,12 @@ class GameState:
         screen.blit(carr2, (self.xr2, self.yr2))
         screen.blit(carb1, (self.xb1, self.yb1))
         screen.blit(carb2, (self.xb2, self.yb2))
+        screen.blit(buff, (50-27,148))
+        screen.blit(buff, (400-24,510-130))
+        screen.blit(buff, (190-27,193.5+65))
+        screen.blit(buff,(810-219, 510-370))
+        screen.blit(buff,(400-25, 27-7))
+        screen.blit(buff,(733,312-57))
         pygame.display.update()
         # # if draw_screen:
         # #     pygame.display.flip()

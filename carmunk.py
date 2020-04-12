@@ -322,18 +322,44 @@ class GameState:
             self.robot4_body.apply_impulse_at_local_point(driving_direction)
             self.space.add(self.robot4_body,self.robot4_shape)
 
-    def frame_step(self):
+    def frame_step(self,Debug,robo1,robo2,word1=None,word2=None):
         action = -1
-        inx = 0
-        iny = 0
-        if keyboard.is_pressed('w'):
-            iny = -0.2
-        if keyboard.is_pressed('a'):
-            inx = -0.2
-        if keyboard.is_pressed('d'):
-            inx = 0.2
-        if keyboard.is_pressed('s'):
-            iny = 0.2
+        flag=1
+        if keyboard.is_pressed('q'):
+            flag=0
+        inx1 = 0
+        iny1 = 0
+        inx2 = 0
+        iny2 = 0
+        if Debug:
+            if keyboard.is_pressed('up'):
+                iny2 = -0.2
+            if keyboard.is_pressed('left'):
+                inx2 = -0.2
+            if keyboard.is_pressed('right'):
+                inx2 = 0.2
+            if keyboard.is_pressed('down'):
+                iny2 = 0.2
+            if keyboard.is_pressed('w'):
+                iny1 = -0.2
+            if keyboard.is_pressed('a'):
+                inx1 = -0.2
+            if keyboard.is_pressed('d'):
+                inx1 = 0.2
+            if keyboard.is_pressed('s'):
+                iny1 = 0.2
+            if check(self.xb1+inx1, self.yb1+iny1):
+                self.xb1 += inx1
+                self.yb1 += iny1
+            if check(self.xb2+inx2,self.yb2+iny2):
+                self.xb2 += inx2
+                self.yb2 += iny2
+            robo1.write(str(self.xb1)+" "+str(self.yb1)+"\n")
+            robo2.write(str(self.xb2)+" "+str(self.yb2)+"\n")
+            
+        else :
+            self.xb1,self.yb1 = float(word1[0]),float(word1[1])
+            self.xb2,self.yb2 = float(word2[0]),float(word2[1])
 
         global prev_dist, goal, car
         # print(action)
@@ -375,9 +401,9 @@ class GameState:
         self.space.debug_draw(self.drawoptions)
         self.space.step(1./10)
         # x, y = self.car_body.position
-        if check(self.xb1+inx, self.yb1+iny):
-            self.xb1 += inx
-            self.yb1 += iny
+        if check(self.xb1+inx1, self.yb1+iny1):
+            self.xb1 += inx1
+            self.yb1 += iny1
         d_b1_r1 = np.sqrt(np.square(self.xr1-self.xb1)+np.square(self.yr1-self.yb1))
         d_b1_r2 = np.sqrt(np.square(self.xr2-self.xb1)+np.square(self.yr2-self.yb1))
         d_b2_r1 = np.sqrt(np.square(self.xr1-self.xb2)+np.square(self.yr1-self.yb2))
@@ -405,6 +431,7 @@ class GameState:
         # # if draw_screen:
         # #     pygame.display.flip()
         # #clock.tick()
+        return flag
 
 
     def move_obstacles(self):
@@ -565,6 +592,22 @@ class GameState:
         
 if __name__ == "__main__":
     game_state = GameState()
+    flag = 1
     # game_state.frame_step(2)
-    while True:
-        game_state.frame_step()
+    Debug = False
+    if Debug:
+        robo1 = open("robo1.txt","w+")
+        robo2 = open("robo2.txt","w+")
+        while flag:
+            flag = game_state.frame_step(Debug,robo1,robo2)
+    else:
+        robo1 = open("robo1.txt","r")
+        robo2 = open("robo2.txt","r")
+        for line1,line2 in zip(robo1,robo2):
+            word1 = line1.split(' ')
+            word2 = line2.split(' ')
+            print(word1[0],word1[1])
+            flag = game_state.frame_step(Debug,robo1,robo2,word1,word2)
+    
+    robo1.close()
+    robo2.close()

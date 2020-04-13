@@ -107,6 +107,21 @@ def check_shoot(x0, y0):
     else :
         return 1
 
+def check_buff_debuff(x, y):
+    if x>=276 and x<=376 :
+        if y<=28 and y>= -88 :
+            return 1 #top
+        elif y<=387 and y>= 271 :
+            return 3 #bottom
+    if x<=596 and x>=492 and y<=149 and y>=28 : #top right
+        return 2
+    if x<=165 and x>=65 and y<=267 and y>=150 : #bottom left
+        return 4
+    if x<=23 and x>=-75 and y<=154 and y>=38 : #left
+        return 5
+    if x<=735 and x>=635 and y<=262 and y>=144 : #right
+        return 6
+
 def ifshoot(xr, yr, xb, yb):
     arr = range(101)
     y = 0
@@ -420,6 +435,7 @@ class GameState:
             if keyboard.is_pressed('s'):
                 iny1 = 0.2
             if check(self.xb1+inx1, self.yb1+iny1) and self.healb1>0:
+            # print("this one", self.xb1, self.yb1)
                 self.xb1 += inx1
                 self.yb1 += iny1
             if check(self.xb2+inx2,self.yb2+iny2) and self.healb2>0:
@@ -431,6 +447,9 @@ class GameState:
             if check(self.xr2+inx4,self.yr2+iny4) and self.healr1>0:
                 self.xr2 += inx4
                 self.yr2 += iny4
+
+            # print(check_buff_debuff(self.xb2, self.yb2))
+
             robo1.write(str(self.xb1)+" "+str(self.yb1)+"\n")
             robo2.write(str(self.xb2)+" "+str(self.yb2)+"\n")
             robo3.write(str(self.xr1)+" "+str(self.yr1)+"\n")
@@ -496,7 +515,7 @@ class GameState:
         d_b2_r1 = np.sqrt(np.square(self.xr1-self.xb2)+np.square(self.yr1-self.yb2))
         d_b2_r2 = np.sqrt(np.square(self.xr2-self.xb2)+np.square(self.yr2-self.yb2))
         
-        # pygame.draw.line(screen, (255,100,0), (self.xb1,self.yb1), (0,0), 5)
+        # pygame.draw.line(screen, (255,100,0), (self.xb1+75,self.yb1+75), (0,0), 5)
 
         if d_b1_r1 <= 200 and d_b1_r1<=d_b1_r2 and self.healb1>0 and self.healr1>0 and (self.pr1>0 or self.pb1>0):
             if ifshoot(self.xr1+75, self.yr1+75, self.xb1+75, self.yb1+75):
@@ -779,7 +798,7 @@ if __name__ == "__main__":
     game_state = GameState()
     flag = 1
     # game_state.frame_step(2)
-    Debug = False
+    Debug = True
     if Debug:
         robo1 = open("robo1.2.txt","w+")
         robo2 = open("robo2.2.txt","w+")

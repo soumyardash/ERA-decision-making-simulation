@@ -158,18 +158,23 @@ def draw_dashed_line(surf, color, start_pos, end_pos, width=1, dash_length=10):
 class GameState:
     def __init__(self):
         # Global-ish.
-        self.xr1 = 682
-        self.yr1 =  323
-        self.xr2 = 682
-        self.yr2 =  -27
-        self.xb1 = -27
-        self.yb1 =  -27
-        self.xb2 = -27
-        self.yb2 =  323
-        self.healr1 = 2000
-        self.healr2 = 2000
-        self.healb1 = 2000
-        self.healb2 = 2000
+        self.frames=0
+        self.buffprob=0
+        self.buffresb=0
+        self.buffpror=0
+        self.buffresr=0
+        self.xr1 = 323.5999999999721  
+        self.yr1 = 333.9999999999994
+        self.xr2 = 433.1999999999659  
+        self.yr2 = 101.20000000000084
+        self.xb1 = 318.19999999999044  
+        self.yb1 = 76.00000000000048
+        self.xb2 = 310.3999999999909  
+        self.yb2 = 216.80000000000604
+        self.healr1 =2000
+        self.healr2 =2000
+        self.healb1 =2000
+        self.healb2 =2000
         self.pr1 = 100
         self.pr2 = 100
         self.pb1 = 100
@@ -368,6 +373,7 @@ class GameState:
 
     def frame_step(self,Debug,robo1=None,robo2=None,robo3=None,robo4=None,word1=None,word2=None,word3=None,word4=None):
         action = -1
+        self.frames+=1
         flag=1
         if keyboard.is_pressed('q'):
             flag=0
@@ -413,16 +419,16 @@ class GameState:
                 inx1 = 0.2
             if keyboard.is_pressed('s'):
                 iny1 = 0.2
-            if check(self.xb1+inx1, self.yb1+iny1):
+            if check(self.xb1+inx1, self.yb1+iny1) and self.healb1>0:
                 self.xb1 += inx1
                 self.yb1 += iny1
-            if check(self.xb2+inx2,self.yb2+iny2):
+            if check(self.xb2+inx2,self.yb2+iny2) and self.healb2>0:
                 self.xb2 += inx2
                 self.yb2 += iny2
-            if check(self.xr1+inx3, self.yr1+iny3):
+            if check(self.xr1+inx3, self.yr1+iny3) and self.healr1>0:
                 self.xr1 += inx3
                 self.yr1 += iny3
-            if check(self.xr2+inx4,self.yr2+iny4):
+            if check(self.xr2+inx4,self.yr2+iny4) and self.healr1>0:
                 self.xr2 += inx4
                 self.yr2 += iny4
             robo1.write(str(self.xb1)+" "+str(self.yb1)+"\n")
@@ -483,6 +489,8 @@ class GameState:
         self.space.debug_draw(self.drawoptions)
         self.space.step(1./10)
         # x, y = self.car_body.position
+        print(self.healb1,self.healb2,self.healr1,self.healr2)
+        print(self.pb1,self.pb2,self.pr1,self.pr2)
         d_b1_r1 = np.sqrt(np.square(self.xr1-self.xb1)+np.square(self.yr1-self.yb1))
         d_b1_r2 = np.sqrt(np.square(self.xr2-self.xb1)+np.square(self.yr2-self.yb1))
         d_b2_r1 = np.sqrt(np.square(self.xr1-self.xb2)+np.square(self.yr1-self.yb2))
@@ -490,49 +498,69 @@ class GameState:
         
         # pygame.draw.line(screen, (255,100,0), (self.xb1,self.yb1), (0,0), 5)
 
-        if d_b1_r1 <= 200 and d_b1_r1<=d_b1_r2:
+        if d_b1_r1 <= 200 and d_b1_r1<=d_b1_r2 and self.healb1>0 and self.healr1>0 and (self.pr1>0 or self.pb1>0):
             if ifshoot(self.xr1+75, self.yr1+75, self.xb1+75, self.yb1+75):
                 # pygame.draw.line(screen, (255,0,255), (self.xb1+75,self.yb1+75), (self.xr1+75,self.yr1+75), 5)
                 draw_dashed_line(screen, (255,0,255), (self.xb1+75,self.yb1+75), (self.xr1+75,self.yr1+75), width=5, dash_length=5)
-                x = random.randrange(1,5,1)#projectiles shot by blue1
-                y = random.randrange(1,5,1)#projectiles shot by red1
-                self.pr1-=y
-                self.pb1-=x
-                self.healb1-=y
-                self.healr1-=x
+                x = 2#projectiles shot by blue1
+                y = 2#projectiles shot by red1
+                if(self.frames%250==0):
+                    if(self.pr1>0):
+                        self.pr1-=y
+                        self.healb1-=15*y
+                    if(self.pb1>0):
+                        self.pb1-=x
+                        self.healr1-=15*x
+                    #if(self.healr1<=500 or self.healb1<=500):
+                    #    flag=0
 
-        elif d_b1_r2 <=200 and d_b1_r2<d_b1_r1:
+        elif d_b1_r2 <=200 and d_b1_r2<d_b1_r1 and self.healb1>0 and self.healr2>0 and (self.pr2>0 or self.pb1>0):
             if ifshoot(self.xr2+75, self.yr2+75, self.xb1+75, self.yb1+75):
                 # pygame.draw.line(screen, (255,255,0), (self.xb1+75,self.yb1+75), (self.xr2+75,self.yr2+75), 5)
                 draw_dashed_line(screen, (255,255,0), (self.xb1+75,self.yb1+75), (self.xr2+75,self.yr2+75), width=5, dash_length=5)
-                x = random.randrange(1,5,1)#projectiles shot by blue1
-                y = random.randrange(1,5,1)#projectiles shot by red2
-                self.pr2-=y
-                self.pb1-=x
-                self.healb1-=y
-                self.healr2-=x
+                x = 2#projectiles shot by blue1
+                y = 2#projectiles shot by red2
+                if(self.frames%250==0):
+                    if(self.pr2>0):
+                        self.pr2-=y
+                        self.healb1-=15*y
+                    if(self.pb1>0):
+                        self.pb1-=x
+                        self.healr2-=15*x
+                    #if(self.healr2<=500 or self.healb1<=500):
+                    #    flag=0
 
-        if d_b2_r1 <= 200 and d_b2_r1<=d_b2_r2:
+        if d_b2_r1 <= 200 and d_b2_r1<=d_b2_r2 and self.healb2>0 and self.healr1>0 and (self.pr1>0 or self.pb2>0):
             if ifshoot(self.xr1+75, self.yr1+75, self.xb2+75, self.yb2+75):
                 # pygame.draw.line(screen, (0,255,255), (self.xb2+75,self.yb2+75), (self.xr1+75,self.yr1+75), 5)
                 draw_dashed_line(screen, (0,255,255), (self.xb2+75,self.yb2+75), (self.xr1+75,self.yr1+75), width=5, dash_length=5)
-                x = random.randrange(1,5,1)#projectiles shot by blue2
-                y = random.randrange(1,5,1)#projectiles shot by red1
-                self.pr1-=y
-                self.pb2-=x
-                self.healb2-=y
-                self.healr1-=x
+                x = 2#projectiles shot by blue2
+                y = 2#projectiles shot by red1
+                if(self.frames%250==0):
+                    if(self.pr1>0):
+                        self.pr1-=y
+                        self.healb2-=15*y
+                    if(self.pb2>0):
+                        self.pb2-=x
+                        self.healr1-=15*x
+                    #if(self.healr1<=500 or self.healb2<=500):
+                    #    flag=0
 
-        elif d_b2_r2 <=200 and d_b2_r2<d_b2_r1:
+        elif d_b2_r2 <=200 and d_b2_r2<d_b2_r1 and self.healb2>0 and self.healr2>0 and (self.pr2>0 or self.pb2>0):
             if ifshoot(self.xr2+75, self.yr2+75, self.xb2+75, self.yb2+75):
                 # pygame.draw.line(screen, (255,0,0), (self.xb2+75,self.yb2+75), (self.xr2+75,self.yr2+75), 5)
                 draw_dashed_line(screen, (255,0,0), (self.xb2+75,self.yb2+75), (self.xr2+75,self.yr2+75), width=5, dash_length=5)
-                x = random.randrange(1,5,1)#projectiles shot by blue2
-                y = random.randrange(1,5,1)#projectiles shot by red2
-                self.pr2-=y
-                self.pb2-=x
-                self.healb2-=y
-                self.healr2-=x
+                x = 2#projectiles shot by blue2
+                y = 2#projectiles shot by red2
+                if(self.frames%250==0):
+                    if(self.pr2>0):
+                        self.pr2-=y
+                        self.healb2-=15*y
+                    if(self.pb2>0):
+                        self.pb2-=x
+                        self.healr2-=15*x
+                    #if(self.healr2<=500 or self.healb2<=500):
+                    #    flag=0
         
         #DISPLAY HEALTH AND PROJECTILE INFO ON SCREEN
         text1 = font.render('red1 health='+str(self.healr1), True, (255,0,0))  
@@ -751,17 +779,19 @@ if __name__ == "__main__":
     game_state = GameState()
     flag = 1
     # game_state.frame_step(2)
-    Debug = True
+    Debug = False
     if Debug:
-        robo1 = open("robo1.txt","w+")
-        robo2 = open("robo2.txt","w+")
-        robo3 = open("robo3.txt","w+")
-        robo4 = open("robo4.txt","w+")
+        robo1 = open("robo1.2.txt","w+")
+        robo2 = open("robo2.2.txt","w+")
+        robo3 = open("robo3.2.txt","w+")
+        robo4 = open("robo4.2.txt","w+")
         while flag:
             flag = game_state.frame_step(Debug,robo1,robo2,robo3,robo4)
     else:
-        robo1 = open("robo1.txt","r")
-        robo2 = open("robo2.txt","r")
+        robo1 = open("robo1.1.txt","r")
+        robo2 = open("robo2.1.txt","r")
+        robo3 = open("robo3.1.txt","r")
+        robo4 = open("robo4.1.txt","r")
         for line1,line2,line3,line4 in zip(robo1,robo2,robo3,robo4):
             word1 = line1.split(' ')
             word2 = line2.split(' ')

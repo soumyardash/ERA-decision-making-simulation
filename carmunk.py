@@ -565,7 +565,7 @@ class GameState:
         if d_b1_r1 <= 200 and (d_b1_r1<=d_b1_r2 or self.healr2<=0) and self.healb1>0 and self.healr1>0 and (self.pr1>0 or self.pb1>0):
             if ifshoot(self.xr1+75, self.yr1+75, self.xb1+75, self.yb1+75):
                 # pygame.draw.line(screen, (255,0,255), (self.xb1+75,self.yb1+75), (self.xr1+75,self.yr1+75), 5)
-                draw_dashed_line(screen, (255,0,255), (self.xb1+75,self.yb1+75), (self.xr1+75,self.yr1+75), width=5, dash_length=5)
+                draw_dashed_line(screen, (100,100,0), (self.xb1+75,self.yb1+75), (self.xr1+75,self.yr1+75), width=5, dash_length=5)
                 x = 2#projectiles shot by blue1
                 y = 2#projectiles shot by red1
                 if(self.frames%250==0):
@@ -581,7 +581,7 @@ class GameState:
         elif d_b1_r2 <=200 and (d_b1_r2<d_b1_r1 or self.healr1<=0) and self.healb1>0 and self.healr2>0 and (self.pr2>0 or self.pb1>0):
             if ifshoot(self.xr2+75, self.yr2+75, self.xb1+75, self.yb1+75):
                 # pygame.draw.line(screen, (255,255,0), (self.xb1+75,self.yb1+75), (self.xr2+75,self.yr2+75), 5)
-                draw_dashed_line(screen, (255,255,0), (self.xb1+75,self.yb1+75), (self.xr2+75,self.yr2+75), width=5, dash_length=5)
+                draw_dashed_line(screen, (100,100,0), (self.xb1+75,self.yb1+75), (self.xr2+75,self.yr2+75), width=5, dash_length=5)
                 x = 2#projectiles shot by blue1
                 y = 2#projectiles shot by red2
                 if(self.frames%250==0):
@@ -597,7 +597,7 @@ class GameState:
         if d_b2_r1 <= 200 and (d_b2_r1<=d_b2_r2 or self.healr2<=0) and self.healb2>0 and self.healr1>0 and (self.pr1>0 or self.pb2>0):
             if ifshoot(self.xr1+75, self.yr1+75, self.xb2+75, self.yb2+75):
                 # pygame.draw.line(screen, (0,255,255), (self.xb2+75,self.yb2+75), (self.xr1+75,self.yr1+75), 5)
-                draw_dashed_line(screen, (0,255,255), (self.xb2+75,self.yb2+75), (self.xr1+75,self.yr1+75), width=5, dash_length=5)
+                draw_dashed_line(screen, (100,100,0), (self.xb2+75,self.yb2+75), (self.xr1+75,self.yr1+75), width=5, dash_length=5)
                 x = 2#projectiles shot by blue2
                 y = 2#projectiles shot by red1
                 if(self.frames%250==0):
@@ -613,7 +613,7 @@ class GameState:
         elif d_b2_r2 <=200 and (d_b2_r2<d_b2_r1 or self.healr1<=0) and self.healb2>0 and self.healr2>0 and (self.pr2>0 or self.pb2>0):
             if ifshoot(self.xr2+75, self.yr2+75, self.xb2+75, self.yb2+75):
                 # pygame.draw.line(screen, (255,0,0), (self.xb2+75,self.yb2+75), (self.xr2+75,self.yr2+75), 5)
-                draw_dashed_line(screen, (255,0,0), (self.xb2+75,self.yb2+75), (self.xr2+75,self.yr2+75), width=5, dash_length=5)
+                draw_dashed_line(screen, (100,100,0), (self.xb2+75,self.yb2+75), (self.xr2+75,self.yr2+75), width=5, dash_length=5)
                 x = 2#projectiles shot by blue2
                 y = 2#projectiles shot by red2
                 if(self.frames%250==0):
@@ -636,17 +636,17 @@ class GameState:
             self.buffpror=0
 
         #DISPLAY BUFF DEBUFF ZONES
-        text1 = font.render('Zone 1: Blue projectile buff', True, (255,0,0))  
+        text1 = font.render('Zone 1: Blue projectile buff', True, (0,0,150))  
         bd1 = text1.get_rect() 
-        text2 = font.render('Zone 2: No shooting debuff', True, (255,0,0))  
+        text2 = font.render('Zone 2: No shooting debuff', True, (50,50,50))  
         bd2 = text1.get_rect() 
-        text3 = font.render('Zone 3: Blue restoration buff', True, (255,0,0))  
+        text3 = font.render('Zone 3: Blue restoration buff', True, (0,0,150))  
         bd3 = text1.get_rect() 
-        text4 = font.render('Zone 4: Red restoration buff', True, (255,0,0))  
+        text4 = font.render('Zone 4: Red restoration buff', True, (150,0,0))  
         bd4 = text1.get_rect() 
-        text5 = font.render('Zone 5: No motion debuff', True, (255,0,0))  
+        text5 = font.render('Zone 5: No motion debuff', True, (50,50,50))  
         bd5 = text1.get_rect() 
-        text6 = font.render('Zone 6: Red projectile buff', True, (255,0,0))  
+        text6 = font.render('Zone 6: Red projectile buff', True, (150,0,0))  
         bd6 = text1.get_rect() 
         bd1.center = (918,220)
         bd2.center = (918,240)
@@ -662,13 +662,13 @@ class GameState:
         screen.blit(text6,bd6)
 
         #DISPLAY HEALTH AND PROJECTILE INFO ON SCREEN
-        text1 = font.render('red1 health='+str(self.healr1), True, (255,0,0))  
+        text1 = font.render('red1 health='+str(self.healr1), True, (150,0,0))  
         healthr1 = text1.get_rect()  
-        text2 = font.render('red2 health='+str(self.healr2), True, (255,0,0))  
+        text2 = font.render('red2 health='+str(self.healr2), True, (150,0,0))  
         healthr2 = text2.get_rect()
-        text3 = font.render('blue1 health='+str(self.healb1), True, (255,0,0))  
+        text3 = font.render('blue1 health='+str(self.healb1), True, (0,0,150))  
         healthb1 = text3.get_rect()
-        text4 = font.render('blue2 health='+str(self.healb2), True, (255,0,0))  
+        text4 = font.render('blue2 health='+str(self.healb2), True, (0,0,150))  
         healthb2 = text4.get_rect()
         healthr1.center = (918,20)
         healthr2.center = (918,40)
@@ -683,13 +683,13 @@ class GameState:
         screen.blit(carb1, (self.xb1, self.yb1))
         screen.blit(carb2, (self.xb2, self.yb2))
 
-        text1 = font.render('red1 bullets='+str(self.pr1), True, (255,0,0))  
+        text1 = font.render('red1 bullets='+str(self.pr1), True, (150,0,0))  
         projr1 = text1.get_rect()  
-        text2 = font.render('red2 bullets='+str(self.pr2), True, (255,0,0))  
+        text2 = font.render('red2 bullets='+str(self.pr2), True, (150,0,0))  
         projr2 = text2.get_rect()
-        text3 = font.render('blue1 bullets='+str(self.pb1), True, (255,0,0))  
+        text3 = font.render('blue1 bullets='+str(self.pb1), True, (0,0,150))  
         projb1 = text3.get_rect()
-        text4 = font.render('blue2 bullets='+str(self.pb2), True, (255,0,0))  
+        text4 = font.render('blue2 bullets='+str(self.pb2), True, (0,0,150))  
         projb2 = text4.get_rect()
         projr1.center = (918,120)
         projr2.center = (918,140)

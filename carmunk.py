@@ -107,20 +107,8 @@ def check_shoot(x0, y0):
     else :
         return 1
 
-def check_buff_debuff(x, y):
-    if x>=276 and x<=376 :
-        if y<=28 and y>= -88 :
-            return 1 #top
-        elif y<=387 and y>= 271 :
-            return 3 #bottom
-    if x<=596 and x>=492 and y<=149 and y>=28 : #top right
-        return 2
-    if x<=165 and x>=65 and y<=267 and y>=150 : #bottom left
-        return 4
-    if x<=23 and x>=-75 and y<=154 and y>=38 : #left
-        return 5
-    if x<=735 and x>=635 and y<=262 and y>=144 : #right
-        return 6
+
+        
 
 def ifshoot(xr, yr, xb, yb):
     arr = range(101)
@@ -178,14 +166,14 @@ class GameState:
         self.buffresb=0
         self.buffpror=0
         self.buffresr=0
-        self.xr1 = 323.5999999999721  
-        self.yr1 = 333.9999999999994
-        self.xr2 = 433.1999999999659  
-        self.yr2 = 101.20000000000084
-        self.xb1 = 318.19999999999044  
-        self.yb1 = 76.00000000000048
-        self.xb2 = 310.3999999999909  
-        self.yb2 = 216.80000000000604
+        self.xr1 = 703.800000000005    
+        self.yr1 = 198.40000000000708
+        self.xr2 = 450.99999999996487   
+        self.yr2 = 184.19999999999803
+        self.xb1 = -45.800000000000146   
+        self.yb1 = 98.6000000000008
+        self.xb2 = 539.3999999999857    
+        self.yb2 = 196.00000000000722
         self.healr1 =2000
         self.healr2 =2000
         self.healb1 =2000
@@ -270,6 +258,58 @@ class GameState:
         #self.obstacles.append(self.create_debuff( 808-190, 448-165, 54, 48))#debuff
         #self.create_buff_debuff((0, 0, 255), 808-50, 448-336, 54, 48)#enemy buff
 
+    def check_buff_debuff(self,x, y):
+        if x>=276 and x<=376 :
+            if y<=28 and y>= -88 :
+                if(self.xb1==x and self.yb1==y and self.healb1<=500):
+                    if(self.buffresb==0):
+                        self.healb1+=500
+                        self.buffresb=1 
+                    return 1
+                if(self.xb2==x and self.yb2==y and self.healb2<=500 ):
+                    if(self.buffresb==0):    
+                        self.healb2+=500
+                        self.buffresb=1#top
+                    return 1
+            elif y<=387 and y>= 271 :
+                if(self.xr1==x and self.yr1==y and self.healr1<=500):
+                    if(self.buffresr==0):
+                        self.healr1+=500
+                        self.buffresr=1 
+                    return 1
+                if(self.xr2==x and self.yr2==y and self.healr2<=500 ):
+                    if(self.buffresr==0):    
+                        self.healr2+=500
+                        self.buffresr=1#top
+                    return 1
+                #bottom
+        if x<=596 and x>=492 and y<=149 and y>=28 : #top right
+            return 2
+        if x<=165 and x>=65 and y<=267 and y>=150 : #bottom left
+            return 2
+        if x<=23 and x>=-75 and y<=154 and y>=38 : #left
+            if(self.xb2==x and self.yb2==y and self.pb2<=0):
+                if(self.buffprob==0):
+                    self.pb2=100
+                    self.buffprob=1
+                return 3
+            if(self.xb1==x and self.yb1==y and self.pb1<=0):
+                if(self.buffprob==0):
+                    self.pb1=100
+                    self.buffprob=1
+                return 3
+        if x<=735 and x>=635 and y<=262 and y>=144 :
+            if(self.xr2==x and self.yr2==y and self.pr2<=0):
+                if(self.buffpror==0):
+                    self.pr2=100
+                    self.buffpror=1
+                return 3
+            if(self.xr1==x and self.yr1==y and self.pr1<=0):
+                if(self.buffpror==0):
+                    self.pr1=100
+                    self.buffpror=1
+                return 3 #right
+        return 0
     def new_handle(self):
         pass
     
@@ -444,7 +484,7 @@ class GameState:
             if check(self.xr1+inx3, self.yr1+iny3) and self.healr1>0:
                 self.xr1 += inx3
                 self.yr1 += iny3
-            if check(self.xr2+inx4,self.yr2+iny4) and self.healr1>0:
+            if check(self.xr2+inx4,self.yr2+iny4) and self.healr2>0:
                 self.xr2 += inx4
                 self.yr2 += iny4
 
@@ -517,7 +557,7 @@ class GameState:
         
         # pygame.draw.line(screen, (255,100,0), (self.xb1+75,self.yb1+75), (0,0), 5)
 
-        if d_b1_r1 <= 200 and d_b1_r1<=d_b1_r2 and self.healb1>0 and self.healr1>0 and (self.pr1>0 or self.pb1>0):
+        if d_b1_r1 <= 200 and (d_b1_r1<=d_b1_r2 or self.healr2<=0) and self.healb1>0 and self.healr1>0 and (self.pr1>0 or self.pb1>0):
             if ifshoot(self.xr1+75, self.yr1+75, self.xb1+75, self.yb1+75):
                 # pygame.draw.line(screen, (255,0,255), (self.xb1+75,self.yb1+75), (self.xr1+75,self.yr1+75), 5)
                 draw_dashed_line(screen, (255,0,255), (self.xb1+75,self.yb1+75), (self.xr1+75,self.yr1+75), width=5, dash_length=5)
@@ -533,7 +573,7 @@ class GameState:
                     #if(self.healr1<=500 or self.healb1<=500):
                     #    flag=0
 
-        elif d_b1_r2 <=200 and d_b1_r2<d_b1_r1 and self.healb1>0 and self.healr2>0 and (self.pr2>0 or self.pb1>0):
+        elif d_b1_r2 <=200 and (d_b1_r2<d_b1_r1 or self.healr1<=0) and self.healb1>0 and self.healr2>0 and (self.pr2>0 or self.pb1>0):
             if ifshoot(self.xr2+75, self.yr2+75, self.xb1+75, self.yb1+75):
                 # pygame.draw.line(screen, (255,255,0), (self.xb1+75,self.yb1+75), (self.xr2+75,self.yr2+75), 5)
                 draw_dashed_line(screen, (255,255,0), (self.xb1+75,self.yb1+75), (self.xr2+75,self.yr2+75), width=5, dash_length=5)
@@ -549,7 +589,7 @@ class GameState:
                     #if(self.healr2<=500 or self.healb1<=500):
                     #    flag=0
 
-        if d_b2_r1 <= 200 and d_b2_r1<=d_b2_r2 and self.healb2>0 and self.healr1>0 and (self.pr1>0 or self.pb2>0):
+        if d_b2_r1 <= 200 and (d_b2_r1<=d_b2_r2 or self.healr2<=0) and self.healb2>0 and self.healr1>0 and (self.pr1>0 or self.pb2>0):
             if ifshoot(self.xr1+75, self.yr1+75, self.xb2+75, self.yb2+75):
                 # pygame.draw.line(screen, (0,255,255), (self.xb2+75,self.yb2+75), (self.xr1+75,self.yr1+75), 5)
                 draw_dashed_line(screen, (0,255,255), (self.xb2+75,self.yb2+75), (self.xr1+75,self.yr1+75), width=5, dash_length=5)
@@ -565,7 +605,7 @@ class GameState:
                     #if(self.healr1<=500 or self.healb2<=500):
                     #    flag=0
 
-        elif d_b2_r2 <=200 and d_b2_r2<d_b2_r1 and self.healb2>0 and self.healr2>0 and (self.pr2>0 or self.pb2>0):
+        elif d_b2_r2 <=200 and (d_b2_r2<d_b2_r1 or self.healr1<=0) and self.healb2>0 and self.healr2>0 and (self.pr2>0 or self.pb2>0):
             if ifshoot(self.xr2+75, self.yr2+75, self.xb2+75, self.yb2+75):
                 # pygame.draw.line(screen, (255,0,0), (self.xb2+75,self.yb2+75), (self.xr2+75,self.yr2+75), 5)
                 draw_dashed_line(screen, (255,0,0), (self.xb2+75,self.yb2+75), (self.xr2+75,self.yr2+75), width=5, dash_length=5)
@@ -581,6 +621,14 @@ class GameState:
                     #if(self.healr2<=500 or self.healb2<=500):
                     #    flag=0
         
+        if(self.check_buff_debuff(self.xb1, self.yb1)!=1 and self.check_buff_debuff(self.xb2, self.yb2)!=1):
+            self.buffresb=0
+        if(self.check_buff_debuff(self.xr1, self.yr1)!=1 and self.check_buff_debuff(self.xr2, self.yr2)!=1):
+            self.buffresr=0
+        if(self.check_buff_debuff(self.xb1, self.yb1)!=3 and self.check_buff_debuff(self.xb2, self.yb2)!=3):
+            self.buffprob=0
+        if(self.check_buff_debuff(self.xr1, self.yr1)!=3 and self.check_buff_debuff(self.xr2, self.yr2)!=3):
+            self.buffpror=0
         #DISPLAY HEALTH AND PROJECTILE INFO ON SCREEN
         text1 = font.render('red1 health='+str(self.healr1), True, (255,0,0))  
         healthr1 = text1.get_rect()  
@@ -798,7 +846,7 @@ if __name__ == "__main__":
     game_state = GameState()
     flag = 1
     # game_state.frame_step(2)
-    Debug = True
+    Debug = False
     if Debug:
         robo1 = open("robo1.2.txt","w+")
         robo2 = open("robo2.2.txt","w+")
@@ -807,10 +855,10 @@ if __name__ == "__main__":
         while flag:
             flag = game_state.frame_step(Debug,robo1,robo2,robo3,robo4)
     else:
-        robo1 = open("robo1.1.txt","r")
-        robo2 = open("robo2.1.txt","r")
-        robo3 = open("robo3.1.txt","r")
-        robo4 = open("robo4.1.txt","r")
+        robo1 = open("robo1.txt","r")
+        robo2 = open("robo2.txt","r")
+        robo3 = open("robo3.txt","r")
+        robo4 = open("robo4.txt","r")
         for line1,line2,line3,line4 in zip(robo1,robo2,robo3,robo4):
             word1 = line1.split(' ')
             word2 = line2.split(' ')

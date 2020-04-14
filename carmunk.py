@@ -33,6 +33,7 @@ screen = pygame.display.set_mode((width+220, height))
 clock = pygame.time.Clock()
 
 font = pygame.font.Font('freesansbold.ttf', 15)
+font1 = pygame.font.Font('freesansbold.ttf', 18)
 
 carr1 = pygame.image.load('carr1.png').convert_alpha()
 carr1=pygame.transform.scale(carr1, (150, 150))
@@ -266,54 +267,99 @@ class GameState:
     def check_buff_debuff(self,x, y):
         if x>=276 and x<=376 :
             if y<=28 and y>= -88 :
-                if(self.xb1==x and self.yb1==y and self.healb1<=500):
-                    if(self.buffresb==0):
+                if(self.xb1==x and self.yb1==y):
+                    text1 = font1.render('Blue 1 in Restoration zone with health = '+str(self.healb1), True, (0,0,255))  
+                    healthr1 = text1.get_rect()
+                    healthr1.center = (400,20)
+                    screen.blit(text1,healthr1)
+                    if(self.buffresb==0 and self.healb1<=500):
                         self.healb1+=500
                         self.buffresb=1 
+                        #pygame.display.update()
                     return 1
-                if(self.xb2==x and self.yb2==y and self.healb2<=500 ):
-                    if(self.buffresb==0):    
+
+                if(self.xb2==x and self.yb2==y):
+                    text1 = font1.render('Blue 2 in Restoration zone with health = '+str(self.healb2), True, (0,0,255))  
+                    healthr1 = text1.get_rect()
+                    healthr1.center = (400,20)
+                    screen.blit(text1,healthr1)
+                    if(self.buffresb==0 and self.healb2<=500):
                         self.healb2+=500
-                        self.buffresb=1#top
+                        self.buffresb=1 
+                        #pygame.display.update()
                     return 1
             elif y<=387 and y>= 271 :
-                if(self.xr1==x and self.yr1==y and self.healr1<=500):
-                    if(self.buffresr==0):
+                if(self.xr1==x and self.yr1==y):
+                    text1 = font1.render('Red 1 in Restoration zone with health = '+str(self.healr1), True, (255,0,0))  
+                    healthr1 = text1.get_rect()
+                    healthr1.center = (400,400)
+                    screen.blit(text1,healthr1)
+                    if(self.buffresr==0 and self.healr1<=500):
                         self.healr1+=500
                         self.buffresr=1 
+                        #pygame.display.update()
                     return 1
-                if(self.xr2==x and self.yr2==y and self.healr2<=500 ):
-                    if(self.buffresr==0):    
+
+                if(self.xr2==x and self.yr2==y):
+                    text1 = font1.render('Red 2 in Restoration zone with health = '+str(self.healr2), True, (255,0,0))  
+                    healthr1 = text1.get_rect()
+                    healthr1.center = (400,400)
+                    screen.blit(text1,healthr1)
+                    if(self.buffresr==0 and self.healr2<=500):
                         self.healr2+=500
-                        self.buffresr=1#top
+                        self.buffresr=1 
+                        #pygame.display.update()
                     return 1
+                        #pygame.display.update()
                 #bottom
         if x<=596 and x>=492 and y<=149 and y>=28 : #top right
             return 2
         if x<=165 and x>=65 and y<=267 and y>=150 : #bottom left
             return 2
         if x<=23 and x>=-75 and y<=154 and y>=38 : #left
-            if(self.xb2==x and self.yb2==y and self.pb2<=0):
-                if(self.buffprob==0):
-                    self.pb2=100
-                    self.buffprob=1
-                return 3
-            if(self.xb1==x and self.yb1==y and self.pb1<=0):
-                if(self.buffprob==0):
+            if(self.xb1==x and self.yb1==y):
+                text1 = font1.render('Blue 1 in projectile zone with bullets = '+str(self.pb1), True, (0,0,255))  
+                healthr1 = text1.get_rect()
+                healthr1.center = (400,40)
+                screen.blit(text1,healthr1)
+                if(self.buffprob==0 and self.pb1<=0):
                     self.pb1=100
-                    self.buffprob=1
+                    self.buffprob=1 
+                    #pygame.display.update()
+                return 3
+
+            if(self.xb2==x and self.yb2==y):
+                text1 = font1.render('Blue 2 in projectile zone with bullets = '+str(self.pb2), True, (0,0,255))  
+                healthr1 = text1.get_rect()
+                healthr1.center = (400,40)
+                screen.blit(text1,healthr1)
+                if(self.buffprob==0 and self.pb2<=0):
+                    self.pb2=100
+                    self.buffprob=1 
+                    #pygame.display.update()
                 return 3
         if x<=735 and x>=635 and y<=262 and y>=144 :
-            if(self.xr2==x and self.yr2==y and self.pr2<=0):
-                if(self.buffpror==0):
-                    self.pr2=100
-                    self.buffpror=1
-                return 3
-            if(self.xr1==x and self.yr1==y and self.pr1<=0):
-                if(self.buffpror==0):
+            if(self.xr1==x and self.yr1==y):
+                text1 = font1.render('Red 1 in projectile zone with bullets = '+str(self.pr1), True, (255,0,0))  
+                healthr1 = text1.get_rect()
+                healthr1.center = (400,420)
+                screen.blit(text1,healthr1)
+                if(self.buffpror==0 and self.pr1<=0):
                     self.pr1=100
-                    self.buffpror=1
-                return 3 #right
+                    self.buffpror=1 
+                    #pygame.display.update()
+                return 3
+
+            if(self.xr2==x and self.yr2==y):
+                text1 = font1.render('Red 2 in projectile zone with bullets = '+str(self.pr2), True, (255,0,0))  
+                healthr1 = text1.get_rect()
+                healthr1.center = (400,420)
+                screen.blit(text1,healthr1)
+                if(self.buffpror==0 and self.pr2<=0):
+                    self.pr2=100
+                    self.buffpror=1 
+                    #pygame.display.update()
+                return 3
         return 0
     def new_handle(self):
         pass
@@ -553,8 +599,8 @@ class GameState:
         self.space.debug_draw(self.drawoptions)
         self.space.step(1./10)
         # x, y = self.car_body.position
-        print(self.healb1,self.healb2,self.healr1,self.healr2)
-        print(self.pb1,self.pb2,self.pr1,self.pr2)
+        #print(self.healb1,self.healb2,self.healr1,self.healr2)
+        #print(self.pb1,self.pb2,self.pr1,self.pr2)
         d_b1_r1 = np.sqrt(np.square(self.xr1-self.xb1)+np.square(self.yr1-self.yb1))
         d_b1_r2 = np.sqrt(np.square(self.xr2-self.xb1)+np.square(self.yr2-self.yb1))
         d_b2_r1 = np.sqrt(np.square(self.xr1-self.xb2)+np.square(self.yr1-self.yb2))
@@ -704,6 +750,7 @@ class GameState:
         screen.blit(carr2, (self.xr2, self.yr2))
         screen.blit(carb1, (self.xb1, self.yb1))
         screen.blit(carb2, (self.xb2, self.yb2))
+        #print(self.buffprob,self.buffpror,self.buffresb,self.buffresr)
 
         # screen.blit(buff, (50-27,148))
         # screen.blit(buff, (400-24,510-130))
@@ -711,6 +758,7 @@ class GameState:
         # screen.blit(buff,(810-219, 510-370))
         # screen.blit(buff,(400-25, 27-7))
         # screen.blit(buff,(733,312-57))
+        pygame.display.set_caption("Decision Making Team ERA IIT Kanpur")
         pygame.display.update()
         # # if draw_screen:
         # #     pygame.display.flip()
